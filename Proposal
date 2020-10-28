@@ -7,5 +7,14 @@ Components:
 3 seperate inputs: 
   1 push button
   1 slide potentiometer
-  1 microphone
+  1 microphone (above certain sound threshold)
 
+Software/function outline:
+Once powered on, the program will loop and display a message on the LCD screen prompting the user to start the game by pressing the push button. 
+Once in the game state, we will randomly generate a number to select 1 of 3 distinct actions. 
+Once an action is selected, a corresponding auditory command will be played.
+(we're going to attempt to mount an external sd card in order to play a sound file through the speaker), else display different frequencies
+We will then wait a predetermined amount of time (constantly decreasing,  base value * decreasing decimal) until an input is detected.
+If no input is detected, or input is incorrect, display fail, show score, and end game. 
+If input is correct and in time, increase level, decrease decimal time, and repeat to generating a new random number.
+If input is correct, in time and current level is 99, end game and display score.
