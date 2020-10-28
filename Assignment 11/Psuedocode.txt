@@ -1,0 +1,119 @@
+// True random number generator
+// Walter Anderson built the a random seed generator so we could generate a truely randome number
+// I basically used his ecaxt code but the origonal can be found here: 
+// https://sites.google.com/site/astudyofentropy/project-definition/timer-jitter-entropy-sources/entropy-library/arduino-random-seed
+
+#include <avr/interrupt.h>
+#include <avr/wdt.h>
+#include <util/atomic.h>
+#define randomSeed(s) srandom(s)
+ 
+volatile uint32_t seed;  // These two variables can be reused in your program after the
+volatile int8_t nrot;    // function CreateTrulyRandomSeed()executes in the setup() 
+                         // function.
+ 
+void CreateTrulyRandomSeed()
+{
+  seed = 0;
+  nrot = 32; 
+  
+  // The following five lines of code turn on the watch dog timer interrupt to create the seed value
+  cli();                                             
+  MCUSR = 0;                                         
+  _WD_CONTROL_REG |= (1<<_WD_CHANGE_BIT) | (1<<WDE); 
+  _WD_CONTROL_REG = (1<<WDIE);                       
+  sei();                                             
+ 
+  while (nrot > 0);  // wait here until seed is created
+ 
+  // The following five lines turn off the watch dog timer interrupt
+  cli();                                             
+  MCUSR = 0;                                         
+  _WD_CONTROL_REG |= (1<<_WD_CHANGE_BIT) | (0<<WDE); 
+  _WD_CONTROL_REG = (0<< WDIE);                      
+  sei();                                             
+}
+ 
+ISR(WDT_vect)
+{
+  nrot--;
+  seed = seed << 8;
+  seed = seed ^ TCNT1L;
+}
+ 
+void setup()
+{
+  CreateTrulyRandomSeed();
+  randomSeed(seed);
+  // nrot is set to 32 ... the rest of your setup code should FOLLOW from here.
+}
+
+// now random() will output a truely random number 
+// we'll genearate a value to select an action at randome using
+
+choice= Random()%3; 
+      
+// which will output 1, 2, or 0
+// choice will go into a case statement like so
+
+switch (choice) {
+  case 0:
+    //task 1 function
+    break;
+ case 1:
+    //task 2 function
+    break;
+ case 2:
+    //task 3 function
+    break;   
+}
+
+// Each task function will play the corresponding sound over the speaker
+// start the a loop for the timer
+  // NOTE: loop may be replaces with some sort of timer based interupt if thats doable and easier
+// something like
+
+for ( int i=0; i<=// base condition*decimal value ; i++)
+{
+  if(//task is done)
+  {return 1;}
+}
+return -1;
+
+// with a 1 denoting pass and -1 denoting fail
+// a pass increments the score and displays "Good!" on the screen
+// a fail will display "FAIL!" on the screen and keep the current score
+// the score will be reset apon start
+// our push-button is going to double as a start button and will set a flag
+// the main will look smomthing like this
+
+// non-gameplay behavior
+  // display "press button to start!" or some other cheery bs
+  // display score (zero or last rounds score)
+if(// button is pressed)
+  {
+    start=1; // start flag
+    score=0;
+  }
+while(start==1)
+{
+  // choice case statement
+  if(// pass)
+  {
+    score++;
+    // update display with score and "Good!"
+    // lower decimal to increase speed
+      // NOTE: may not change ever point (ie may change at 5 or 10 point increments)
+  }  
+  
+  else
+  {
+    // displsy "FAIL!" and flash final score
+    // reset decimal to 1
+    start=0;
+  }
+}
+
+// All of this will be contained in a larger loop while power is on
+// thats just about everthing, I didn't include waits or any other timing considerations in
+// here since I wont know if/where I'll need them till we start working with hardware
