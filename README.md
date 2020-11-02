@@ -8,3 +8,6 @@ By:
 Caamano, Anthony
 Ferry, Connor
 Haver, Alexander
+
+Assigned Pins:
+pin 7 = pushbutton
