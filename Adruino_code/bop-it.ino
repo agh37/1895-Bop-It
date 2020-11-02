@@ -50,12 +50,12 @@ void setup()
 //variables
 bool start=0, pass;
 int choice;
+int potpin = A5; // Potentiometer analog pin
 double speedup=1;
 unsigned long startedWaiting;
 unsigned long wait_time;
 
 // TODO:
-// function 2
 // function 3
 // LCD intigration
 
@@ -64,7 +64,7 @@ void loop()
   // non-gameplay behavior
    // display "press button to start!" or some other cheery bs
    // display score (zero or last rounds score)
-  if(// button is pressed)
+  if(digitalRead(7)==HIGH)
    {
      start=1; // start flag
      score=0;
@@ -79,7 +79,7 @@ void loop()
         pass = push_button();
         break;
       case 1:
-        pass =//task 2 function
+        pass = pot();
         break;
       case 2:
         pass =//task 3 function
@@ -107,6 +107,18 @@ bool push_button() {
   while(millis() - startedWaiting <= wait_time) // if waitime ammount of time passes
   {
     if (digitalRead(7)==HIGH)
+    {
+       return true;
+    }
+  }
+  return false;  
+}
+   
+bool pot() {
+  startedWaiting = millis();
+  while(millis() - startedWaiting <= wait_time)
+  {
+    if (analogRead(potpin)>=800) // threshold can be altered during testing
     {
        return true;
     }
