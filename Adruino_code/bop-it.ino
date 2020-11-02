@@ -50,6 +50,7 @@ void setup()
 //variables
 bool start=0, pass;
 int choice;
+int lives;
 int potpin = A5; // Potentiometer analog pin
 double speedup=1;
 unsigned long startedWaiting;
@@ -68,6 +69,7 @@ void loop()
    {
      start=1; // start flag
      score=0;
+     lives=3;
    }
   while(start==1)
   {
@@ -95,9 +97,15 @@ void loop()
   
    else
    {
-     // displsy "FAIL!" and flash final score
-     speedup=1;
-     start=0;
+     // displsy "FAIL!"
+     lives = lives-1; // remove a life
+     // update lives on display
+     if(lives == 0)
+     { 
+      // flash final score
+      speedup=1;
+      start=0;
+     } 
    }
   }
 }
