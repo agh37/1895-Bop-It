@@ -1,8 +1,8 @@
-// this is just the potentiometer function test, will be changed in main  
+// this is just the potentiometer  function test, will be changed in main  
 unsigned long startedWaiting;
 unsigned long wait_time; // this will be passed in most likely, just the calced delay
-void setup() {
-  pinMode(3, INPUT);  
+int potpin = A5;
+void setup() {  
   pinMode(8, OUTPUT); // pass condition
   pinMode(4, OUTPUT); // fail condition
 }
@@ -12,7 +12,7 @@ void loop() {
   startedWaiting = millis();
   while(millis() - startedWaiting <= wait_time)
   {
-    if (digitalRead(3)==HIGH)
+    if (analogRead(potpin)>=800) // controls how far the potentiometer has to move 
     {
        //return true;
        digitalWrite(8, HIGH);
