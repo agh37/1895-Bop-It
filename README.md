@@ -11,4 +11,4 @@ Haver, Alexander
 
 Assigned Pins:
 
-pin 7 = pushbutton
+pin 7 = pushbutton (button connects to high, 100 ohm resistor on pin 7 to ground)
