@@ -1,0 +1,26 @@
+// this is just the potentiometer function test, will be changed in main  
+unsigned long startedWaiting;
+unsigned long wait_time; // this will be passed in most likely, just the calced delay
+void setup() {
+  pinMode(3, INPUT);  
+  pinMode(8, OUTPUT); // pass condition
+  pinMode(4, OUTPUT); // fail condition
+}
+
+void loop() {
+  wait_time = 3000;
+  startedWaiting = millis();
+  while(millis() - startedWaiting <= wait_time)
+  {
+    if (digitalRead(3)==HIGH)
+    {
+       //return true;
+       digitalWrite(8, HIGH);
+    }
+  }
+  //return false;  
+  digitalWrite(4, HIGH);
+  delay(3000); 
+  digitalWrite(8, LOW);
+  digitalWrite(4, LOW);
+}
