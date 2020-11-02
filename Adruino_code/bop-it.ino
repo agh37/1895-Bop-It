@@ -44,12 +44,20 @@ void setup()
 {
   CreateTrulyRandomSeed();
   randomSeed(seed);
+  pinMode(7, INPUT); // push button input 
 }
 
 //variables
 bool start=0, pass;
 int choice;
 double speedup=1;
+unsigned long startedWaiting;
+unsigned long wait_time;
+
+// TODO:
+// function 2
+// function 3
+// LCD intigration
 
 void loop()
 {
@@ -64,10 +72,11 @@ void loop()
   while(start==1)
   {
     choice= Random()%3;
+    wait_time = 3000*speedup; // base time is 3 seconds (can change with testing)
     switch (choice) 
     {
       case 0:
-        pass =//task 1 function
+        pass = push_button();
         break;
       case 1:
         pass =//task 2 function
@@ -91,4 +100,16 @@ void loop()
      start=0;
    }
   }
+}
+   
+bool push_button() {
+  startedWaiting = millis(); // get start time
+  while(millis() - startedWaiting <= wait_time) // if waitime ammount of time passes
+  {
+    if (digitalRead(7)==HIGH)
+    {
+       return true;
+    }
+  }
+  return false;  
 }
