@@ -1,7 +1,7 @@
 // this is just the potentiometer  function test, will be changed in main  
 unsigned long startedWaiting;
 unsigned long wait_time; // this will be passed in most likely, just the calced delay
-int potpin = A5;
+int potpin = A3;
 void setup() {  
   pinMode(8, OUTPUT); // pass condition
   pinMode(4, OUTPUT); // fail condition
