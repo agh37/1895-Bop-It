@@ -153,7 +153,7 @@ int beepDurations[] = {4, 4, 4};
 bool start=0, pass;
 int choice;
 int lives;
-int potpin = A5; // Potentiometer analog pin
+int potpin = A3; // Potentiometer analog pin
 double speedup=1;
 unsigned long startedWaiting;
 unsigned long wait_time;
