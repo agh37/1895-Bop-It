@@ -11,6 +11,8 @@ Haver, Alexander
 
 Assigned Pins:
 
-digital pin 7 (phys 13) = pushbutton (button connects to high, 100 ohm resistor on pin 7 to ground)
+digital pin 7 (phys 13) = pushbutton (button connects to high, 100 ohm resistor on pin 13 to ground)
 
-Analog pin 5 (phys 28) = potemtiometer (center connects to analog pin 5, one arm to power, one arm to ground) 
+digital pin 3 (phys 05) = speaker (positive end connected to pin 5, negative end grounded)
+
+Analog pin 5 (phys 28) = potemtiometer (center connects to pin 28, one arm to power, one arm to ground) 
