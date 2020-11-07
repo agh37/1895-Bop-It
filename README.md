@@ -11,7 +11,7 @@ Haver, Alexander
 
 Assigned Pins:
 
-Pin 1 (PC6) = AVR RESET in (low reset, 10k ohm resistor pulls up to high)
+Pin 1 (PC6) = AVR RESET in (low reset, 10k ohm resistor pulls up to 5V)
 
 Pin 2 (PD0) =
 
@@ -19,7 +19,7 @@ Pin 3 (PD1) =
 
 Pin 4 (PD2) =
 
-Pin 5 (PD3) = speaker out (positive end connected to pin 5, negative end grounded)
+Pin 5 (PD3) = speaker out (positive end connected to pin 5, negative end to GND)
 
 Pin 6 (PD4) =
 
@@ -33,9 +33,9 @@ Pin 10 (PB7) = external 16MHz oscillator
 
 Pin 11 (PD5) =
 
-Pin 12 (PD6) =
+Pin 12 (PD6) = Joystick pushbutton in (button connects to 5V, 100 ohm resistor on pin 12 to GND)
 
-Pin 13 (PD7) = pushbutton in (button connects to high, 100 ohm resistor on pin 13 to ground)
+Pin 13 (PD7) = arcade pushbutton in (button connects to 5V, 100 ohm resistor on pin 13 to GND)
 
 Pin 14 (PB0) =
 
@@ -57,11 +57,11 @@ Pin 22 (GND) = GND
 
 Pin 23 (PC0) =
 
-Pin 24 (PC1) =
+Pin 24 (PC1) = Joystick Y in (center connects to pin 24, one arm to 5V, one arm to GND)
 
-Pin 25 (PC2) =
+Pin 25 (PC2) = Joystick X in (center connects to pin 25, one arm to 5V, one arm to GND)
 
-Pin 26 (PC3) = slide potemtiometer in (center connects to pin 28, one arm to power, one arm to ground)
+Pin 26 (PC3) = slide potemtiometer in (center connects to pin 26, one arm to 5V, one arm to GND)
 
 Pin 27 (PC4) = LCD SDA ?
 
