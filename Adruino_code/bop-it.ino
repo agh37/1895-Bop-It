@@ -2,6 +2,8 @@
 // I basically used his ecaxt code but the origonal can be found here: 
 // https://sites.google.com/site/astudyofentropy/project-definition/timer-jitter-entropy-sources/entropy-library/arduino-random-seed
 
+#include <Wire.h>
+#include "DFRobot_RGBLCD.h"
 #include <avr/interrupt.h>
 #include <avr/wdt.h>
 #include <util/atomic.h>
@@ -39,12 +41,28 @@ ISR(WDT_vect)
   seed = seed << 8;
   seed = seed ^ TCNT1L;
 }
- 
+
+// custom symbol heart
+byte heart[8] = {
+    0b00000,
+    0b01010,
+    0b11111,
+    0b11111,
+    0b11111,
+    0b01110,
+    0b00100,
+    0b00000
+};
+
+DFRobot_RGBLCD lcd(16,2);
+
 void setup()
 {
   CreateTrulyRandomSeed();
   randomSeed(seed);
   pinMode(7, INPUT); // push button input 
+  lcd.init();
+  lcd.customSymbol(0, heart);
 }
 
 // beep setup start (remove if sound files work) 
@@ -142,7 +160,7 @@ void setup()
 #define NOTE_DS8 4978
 
 // sound groupings for beeps
-int beeps[] = {NOTE_A3, NOTE_B3, NOTE_C3};
+int beep[] = {NOTE_A3, NOTE_B3, NOTE_C3};
 
 // beep durations: 4 = quarter note, 8 = eighth note, etc.:
 int beepDurations[] = {4, 4, 4};
@@ -154,28 +172,36 @@ bool start=0, pass;
 int choice;
 int lives;
 int potpin = A3; // Potentiometer analog pin
+int ypin = A2;
+int xpin = A1;
+int score= 0;
 double speedup=1;
 unsigned long startedWaiting;
 unsigned long wait_time;
 
 // TODO:
-// function 3
-// LCD intigration
+// setup spacing decrease 
 
 void loop()
 {
-  // non-gameplay behavior
-   // display "press button to start!" or some other cheery bs
-   // display score (zero or last rounds score)
+  lcd.setRGB(255, 255, 255);
+  lcd.setCursor(0, 0);
+  lcd.print("Press to start");
   if(digitalRead(7)==HIGH)
    {
      start=1; // start flag
      score=0;
      lives=3;
+     lcd.setCursor(0, 0);
+     lcd.print("              ");
+     update_lives();
+     update_score();
    }
   while(start==1)
   {
-    choice= Random()%3;
+    lcd.setCursor(0, 1);
+    lcd.print("   ");
+    choice= rand()%3;
     wait_time = 3000*speedup; // base time is 3 seconds (can change with testing)
     beeps();
     switch (choice) 
@@ -187,33 +213,64 @@ void loop()
         pass = pot();
         break;
       case 2:
-        pass =//task 3 function
+        pass =joy_rot();
        break;   
     }
    if(pass)
    {
      score++;
-     // update display with score and "Good!"
+     update_score();
+     lcd.setCursor(0, 0);
+     lcd.print("GOOD! ");
+     startedWaiting = millis();
+     while(millis() - startedWaiting <= 1000)
+     {
+       lcd.setRGB(0, 255, 0);
+       delay(100);
+       lcd.setRGB(255, 255, 255);
+       delay(100);
+     }
      // lower speedup to increase speed
        // NOTE: may not change ever point (ie may change at 5 or 10 point increments)
    }  
   
-   else
+   else // failed action
    {
-     // displsy "FAIL!"
-     lives = lives-1; // remove a life
-     // update lives on display
-     if(lives == 0)
-     { 
-      // flash final score
-      speedup=1;
-      start=0;
-     } 
-   }
+       lives= lives-1; // lower lives
+       update_lives(); // update lives
+       if (lives==0) // if you're out of lives play game over screen snf return to pre-game
+       {
+        lcd.setCursor(0, 1);
+        lcd.print("   ");
+        lcd.setRGB(255, 0, 0);
+        lcd.setCursor(13, 0);
+        lcd.write("   ");
+        lcd.setCursor(0, 0);
+        lcd.print("YOU LOSE! ");
+        start=0;
+        delay(3000);
+       }
+       else // display wrong and flash screen
+       {
+        lcd.setCursor(0, 0);
+        lcd.print("WRONG!");
+        startedWaiting = millis();
+        while(millis() - startedWaiting <= 1000)
+        {
+          lcd.setRGB(255, 0, 0);
+          delay(100);
+          lcd.setRGB(255, 255, 255);
+          delay(100);
+        }
+       } 
+    }
   }
 }
    
-bool push_button() {
+bool push_button() 
+{
+  lcd.setCursor(0, 0);
+  lcd.print("BOP-IT");
   startedWaiting = millis(); // get start time
   while(millis() - startedWaiting <= wait_time) // if waitime ammount of time passes
   {
@@ -225,11 +282,25 @@ bool push_button() {
   return false;  
 }
    
-bool pot() {
+bool pot() 
+{
+ lcd.setCursor(0, 0);
+ lcd.print("SLIDE ");
+ bool attop;
+ if(analogRead(potpin)>=800)
+ {attop=1;}
+ if(analogRead(potpin)<=223)
+ {attop=0;}
+ else
+ {return false;}
   startedWaiting = millis();
   while(millis() - startedWaiting <= wait_time)
   {
-    if (analogRead(potpin)>=800) // threshold can be altered during testing
+    if (analogRead(potpin)>=800 && not attop ) // threshold can be altered during testing
+    {
+       return true;
+    }
+    if (analogRead(potpin)<=223 && attop ) // threshold can be altered during testing
     {
        return true;
     }
@@ -237,12 +308,133 @@ bool pot() {
   return false;  
 }
 
+bool joy_rot() 
+{
+  lcd.setCursor(0, 0);
+  lcd.print("ROTATE");
+  char seq[4]; // this is where we store our direction sequence
+  bool cw=rand()%2;
+  lcd.setCursor(0, 1);
+  if(cw)
+  {lcd.print("CW ");} 
+  else
+  {lcd.print("CCW");}
+  for(int i=0;i<4;i++) // filling the array with nothing values
+  {
+    seq[i]='q';
+  }
+  wait_time = 3000;
+  startedWaiting = millis();
+  int count=0; // serves to count how many inputs we've saved and also what element in the sequency array we are filling
+  while(millis() - startedWaiting <= wait_time)
+  {
+   if(count<4) // if the array isn't filled
+   {
+    seq[count]=test_dir(); // test what direction the joystick is in
+    if(seq[count]!='q') // if the function outputs an important value
+    {
+      if(count==0) // if this is the first element just comit the tested value to the array
+      {
+        count++;
+      }
+      else if(seq[count]!= seq[count-1]) // if its not the first value, only comit it if the new element is diffrent than the last element
+      {
+        count++;
+      }
+      // if one of those conditions isn't met, we are going to overwrite the value we dont like until they are
+    }
+   }
+   if(count>=4) // one the array is full
+   {
+    if(cw) // if we are testing for clockwise
+    {
+      // return true for the clockwise conditions and false for non clockwise conditions
+      if((seq[0]=='u'&&seq[1]=='r'&&seq[2]=='d'&&seq[3]=='l')||(seq[0]=='r'&&seq[1]=='d'&&seq[2]=='l'&&seq[3]=='u')||(seq[0]=='d'&&seq[1]=='l'&&seq[2]=='u'&&seq[3]=='r')||(seq[0]=='l'&&seq[1]=='u'&&seq[2]=='r'&&seq[3]=='d'))
+      {
+        return true; 
+      }
+      else
+      {
+        return false;  
+      }
+    }
+    if(not cw) // its the exact same for counter clockwise as clockwise but for counter clockwise conditions
+    {
+      if((seq[0]=='u'&&seq[1]=='l'&&seq[2]=='d'&&seq[3]=='r')||(seq[0]=='r'&&seq[1]=='u'&&seq[2]=='l'&&seq[3]=='d')||(seq[0]=='d'&&seq[1]=='r'&&seq[2]=='u'&&seq[3]=='l')||(seq[0]=='l'&&seq[1]=='d'&&seq[2]=='r'&&seq[3]=='u'))
+      {
+        return true; 
+      }
+      else
+      {
+        return false;  
+      }
+    }
+   }
+  }
+  return false;  
+}
+// direction test for my rotate function
+char test_dir()
+{
+  int btop= 1023-150;
+  int bbot= 150;
+
+  if (analogRead(ypin)< bbot && analogRead(xpin)> bbot && analogRead(xpin)< btop)
+  {return 'u';}
+  else if (analogRead(ypin)> btop && analogRead(xpin)> bbot && analogRead(xpin)< btop)
+  {return 'd';}
+  else if (analogRead(xpin)< bbot && analogRead(ypin)> bbot && analogRead(ypin)< btop)
+  {return 'r';}
+  else if (analogRead(xpin)> btop && analogRead(ypin)> bbot && analogRead(ypin)< btop)
+  {return 'l';}
+  else
+  {return 'q';}
+}
+
 // may be replaced if sound files work
 void beeps()
 {
  int beepDuration = 1000 / beepDurations[0];
  int pauseBetweenbeeps = beepDuration * 1.30;
- tone(3, melody[choice], beepDuration);
+ tone(3, beep[choice], beepDuration);
  delay(pauseBetweenbeeps);
  noTone(3);
 } 
+
+void update_lives()
+{
+  switch (lives)
+  {
+    case 3:
+      lcd.setCursor(13, 0);
+      lcd.write((unsigned char)0);
+      lcd.write((unsigned char)0);
+      lcd.write((unsigned char)0);
+      break;
+    case 2:
+      lcd.setCursor(13, 0);
+      lcd.write(" ");
+      lcd.write((unsigned char)0);
+      lcd.write((unsigned char)0);
+      break; 
+    case 1:
+      lcd.setCursor(13, 0);
+      lcd.write(" ");
+      lcd.write(" ");
+      lcd.write((unsigned char)0);
+      break;
+    case 0:
+      lcd.setCursor(13, 0);
+      lcd.write(" ");
+      lcd.write(" ");
+      lcd.write(" ");
+      break;          
+  } 
+}
+void update_score()
+{
+  lcd.setCursor(14, 1);
+  if(score<10)
+  {lcd.print("0");}
+  lcd.print(score);
+}
