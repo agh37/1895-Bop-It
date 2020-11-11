@@ -301,7 +301,7 @@ bool pot()
  bool attop;
  if(analogRead(potpin)>=800)
  {attop=1;}
- if(analogRead(potpin)<=223)
+ else if(analogRead(potpin)<=223)
  {attop=0;}
  else
  {return false;}
