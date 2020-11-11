@@ -180,7 +180,7 @@ unsigned long startedWaiting;
 unsigned long wait_time;
 
 // TODO:
-// LCD intigration 
+// speedup
 
 void loop()
 {
@@ -232,18 +232,21 @@ void loop()
         start=0;
         delay(3000);
      }
-     lcd.setCursor(0, 0);
-     lcd.print("GOOD! ");
-     startedWaiting = millis();
-     while(millis() - startedWaiting <= 1000)
+     else
      {
-       lcd.setRGB(0, 255, 0);
-       delay(100);
-       lcd.setRGB(255, 255, 255);
-       delay(100);
+       lcd.setCursor(0, 0);
+       lcd.print("GOOD! ");
+       startedWaiting = millis();
+       while(millis() - startedWaiting <= 1000)
+       {
+         lcd.setRGB(0, 255, 0);
+         delay(100);
+         lcd.setRGB(255, 255, 255);
+         delay(100);
+       }
+       // lower speedup to increase speed
+         // NOTE: may not change ever point (ie may change at 5 or 10 point increments)
      }
-     // lower speedup to increase speed
-       // NOTE: may not change ever point (ie may change at 5 or 10 point increments)
    }  
   
    else // failed action
