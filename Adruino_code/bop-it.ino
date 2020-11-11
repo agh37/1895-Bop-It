@@ -180,7 +180,7 @@ unsigned long startedWaiting;
 unsigned long wait_time;
 
 // TODO:
-// setup spacing decrease 
+// LCD intigration 
 
 void loop()
 {
@@ -220,6 +220,18 @@ void loop()
    {
      score++;
      update_score();
+     if (score==99) // if you're out of lives play game over screen snf return to pre-game
+     {
+        lcd.setCursor(0, 1);
+        lcd.print("   ");
+        lcd.setRGB(0, 255, 0);
+        lcd.setCursor(13, 0);
+        lcd.write("   ");
+        lcd.setCursor(0, 0);
+        lcd.print("YOU WIN!  ");
+        start=0;
+        delay(3000);
+     }
      lcd.setCursor(0, 0);
      lcd.print("GOOD! ");
      startedWaiting = millis();
