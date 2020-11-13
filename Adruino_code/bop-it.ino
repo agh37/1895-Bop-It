@@ -61,6 +61,7 @@ void setup()
   CreateTrulyRandomSeed();
   randomSeed(seed);
   pinMode(7, INPUT); // push button input 
+  pinMode(6, INPUT);
   lcd.init();
   lcd.customSymbol(0, heart);
 }
@@ -168,7 +169,7 @@ int beepDurations[] = {4, 4, 4};
 // beep setup end
 
 //variables
-bool start=0, pass;
+bool start=0, pass, dbg=0;
 int choice;
 int lives;
 int potpin = A3; // Potentiometer analog pin
@@ -197,6 +198,13 @@ void loop()
      update_lives();
      update_score();
    }
+ if(analogRead(potpin)>=800 && digitalRead(6))
+  {
+    lcd.setCursor(0, 0);
+    lcd.print("              ");
+    dbg=1;
+    debug(); 
+  } 
   while(start==1)
   {
     lcd.setCursor(0, 1);
@@ -453,3 +461,47 @@ void update_score()
   {lcd.print("0");}
   lcd.print(score);
 }
+
+void debug()
+{
+ while(dbg)
+ { 
+  lcd.setCursor(5, 0);
+  lcd.print(" ");
+  lcd.setCursor(0, 0);
+  lcd.print("Y:");
+  lcd.print(analogRead(ypin));
+  lcd.setCursor(7, 0);
+  lcd.print("B:");
+  if (digitalRead(7)==HIGH)
+  {lcd.print("HI");}
+  else
+  {lcd.print("LO");}
+  lcd.print(" J:");
+  if (digitalRead(6)==HIGH)
+  {lcd.print("HI");}
+  else
+  {lcd.print("LO");}
+  lcd.setCursor(5, 1);
+  lcd.print(" ");
+  lcd.setCursor(0, 1);
+  lcd.print("X:");
+  lcd.print(analogRead(xpin));
+  lcd.setCursor(13, 1);
+  lcd.print(" ");
+  lcd.setCursor(7, 1);
+  lcd.print(" S:");
+  lcd.print(analogRead(potpin));
+
+  delay(100);
+  if(analogRead(potpin)>=800 && digitalRead(6))
+  {
+    lcd.setCursor(0, 0);
+    lcd.print("                ");
+    lcd.setCursor(0, 1);
+    lcd.print("                ");
+    dbg=0;
+    debug(); 
+  } 
+ }
+} 
