@@ -200,8 +200,10 @@ void loop()
    }
  if(analogRead(potpin)>=800 && digitalRead(6))
   {
-    lcd.setCursor(0, 0);
-    lcd.print("              ");
+     lcd.setCursor(0, 0);
+    lcd.print("                ");
+    lcd.setCursor(0, 1);
+    lcd.print("                ");
     dbg=1;
     debug(); 
   } 
@@ -292,6 +294,11 @@ void loop()
    
 bool push_button() 
 {
+  bool attop;
+  if(analogRead(potpin)>=800)
+  {attop=1;}
+  else if(analogRead(potpin)<=223)
+  {attop=0;}
   lcd.setCursor(0, 0);
   lcd.print("BOP-IT");
   startedWaiting = millis(); // get start time
@@ -300,6 +307,18 @@ bool push_button()
     if (digitalRead(7)==HIGH)
     {
        return true;
+    }
+    if (analogRead(potpin)>=800 && not attop ) // threshold can be altered during testing
+    {
+      return false;
+    }
+    if (analogRead(potpin)<=223 && attop ) // threshold can be altered during testing
+    {
+      return false;
+    }
+    if (test_dir()!='q')
+    {
+      return false;
     }
   }
   return false;  
@@ -327,12 +346,25 @@ bool pot()
     {
        return true;
     }
+    if (digitalRead(7)==HIGH)
+    {
+       return false;
+    }
+    if (test_dir()!='q')
+    {
+      return false;
+    }
   }
   return false;  
 }
 
 bool joy_rot() 
 {
+  bool attop;
+  if(analogRead(potpin)>=800)
+  {attop=1;}
+  else if(analogRead(potpin)<=223)
+  {attop=0;}
   lcd.setCursor(0, 0);
   lcd.print("ROTATE");
   char seq[4]; // this is where we store our direction sequence
@@ -363,6 +395,18 @@ bool joy_rot()
       else if(seq[count]!= seq[count-1]) // if its not the first value, only comit it if the new element is diffrent than the last element
       {
         count++;
+      }
+      if (analogRead(potpin)>=800 && not attop ) // threshold can be altered during testing
+      {
+        return false;
+      }
+      if (analogRead(potpin)<=223 && attop ) // threshold can be altered during testing
+      {
+        return false;
+      }
+      if (digitalRead(7)==HIGH)
+      {
+        return false;
       }
       // if one of those conditions isn't met, we are going to overwrite the value we dont like until they are
     }
