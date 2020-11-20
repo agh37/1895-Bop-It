@@ -169,7 +169,7 @@ int beepDurations[] = {4, 4, 4, 4};
 // beep setup end
 
 //variables
-bool start=0, pass, dbg=0;
+bool start=0, pass, dbg=0, hm=0;
 int choice;
 int lives;
 int potpin = A3; // Potentiometer analog pin
@@ -186,7 +186,14 @@ void loop()
 {
   lcd.setRGB(255, 255, 255);
   lcd.setCursor(0, 0);
-  lcd.print("Press to start");
+  if(hm)
+  {
+   lcd.print("Hardmode");
+  }
+  if(not hm)
+  {
+    lcd.print("Press to start");
+  }  
   disp_hiscore();
   if(digitalRead(7)==HIGH)
    {
@@ -201,17 +208,25 @@ void loop()
    }
  if(analogRead(potpin)>=800 && digitalRead(6))
   {
-     lcd.setCursor(0, 0);
+    lcd.setCursor(0, 0);
     lcd.print("                ");
     lcd.setCursor(0, 1);
     lcd.print("                ");
     dbg=1;
     debug(); 
   } 
+  if(analogRead(potpin)<=223 && digitalRead(6))
+  {
+    hm= not hm;
+    lcd.setCursor(0, 0);
+    lcd.print("                "); 
+  } 
   while(start==1)
   {
+    lcd.setCursor(0, 0);
+    lcd.print("             ");
     lcd.setCursor(0, 1);
-    lcd.print("   ");
+    lcd.print("                ");
     choice= rand()%3;
     wait_time = 3000*speedup; // base time is 3 seconds (can change with testing)
     switch (choice) 
@@ -230,13 +245,14 @@ void loop()
    {
      score++;
      update_score();
+     update_hiscore();
      if (score==99) // if you're out of lives play game over screen snf return to pre-game
      {
+        lcd.setCursor(0, 0);
+        lcd.print("                ");
         lcd.setCursor(0, 1);
-        lcd.print("   ");
+        lcd.print("                ");
         lcd.setRGB(0, 255, 0);
-        lcd.setCursor(13, 0);
-        lcd.write("   ");
         lcd.setCursor(0, 0);
         lcd.print("YOU WIN!  ");
         start=0;
@@ -245,7 +261,7 @@ void loop()
      else
      {
        lcd.setCursor(0, 0);
-       lcd.print("GOOD! ");
+       lcd.print("GOOD!   ");
        startedWaiting = millis();
        while(millis() - startedWaiting <= 1000)
        {
@@ -268,11 +284,11 @@ void loop()
        update_lives(); // update lives
        if (lives==0) // if you're out of lives play game over screen snf return to pre-game
        {
+        lcd.setCursor(0, 0);
+        lcd.print("                ");
         lcd.setCursor(0, 1);
-        lcd.print("   ");
+        lcd.print("                ");
         lcd.setRGB(255, 0, 0);
-        lcd.setCursor(13, 0);
-        lcd.write("   ");
         lcd.setCursor(0, 0);
         lcd.print("YOU LOSE! ");
         start=0;
@@ -281,6 +297,10 @@ void loop()
        }
        else // display wrong and flash screen
        {
+        lcd.setCursor(0, 0);
+        lcd.print("             ");
+        lcd.setCursor(0, 1);
+        lcd.print("                ");
         lcd.setCursor(0, 0);
         lcd.print("WRONG!");
         startedWaiting = millis();
@@ -305,7 +325,10 @@ bool push_button()
   else if(analogRead(potpin)<=223)
   {attop=0;}
   lcd.setCursor(0, 0);
-  lcd.print("BOP-IT");
+  if(hm)
+  {lcd.print("Hardmode");}
+  else
+  {lcd.print("BOP-IT");}
   startedWaiting = millis(); // get start time
   while(millis() - startedWaiting <= wait_time) // if waitime ammount of time passes
   {
@@ -333,7 +356,10 @@ bool pot()
 {
  beeps();
  lcd.setCursor(0, 0);
- lcd.print("SLIDE ");
+ if(hm)
+ {lcd.print("Hardmode");}
+ else
+ {lcd.print("SLIDE ");}
  bool attop;
  if(analogRead(potpin)>=800)
  {attop=1;}
@@ -372,16 +398,24 @@ bool joy_rot()
   else if(analogRead(potpin)<=223)
   {attop=0;}
   lcd.setCursor(0, 0);
-  lcd.print("ROTATE");
+  if(hm)
+  {lcd.print("Hardmode");}
+  else
+  {lcd.print("ROTATE");}
   char seq[4]; // this is where we store our direction sequence
   bool cw=rand()%2;
   choice=choice+cw;
   beeps();
   lcd.setCursor(0, 1);
-  if(cw)
-  {lcd.print("CW ");} 
+  if(hm)
+  {lcd.print("Good luck");}
   else
-  {lcd.print("CCW");}
+  {
+    if(cw)
+    {lcd.print("CW ");} 
+    else
+    {lcd.print("CCW");}
+  }  
   for(int i=0;i<4;i++) // filling the array with nothing values
   {
     seq[i]='q';
