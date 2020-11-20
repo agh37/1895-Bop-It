@@ -226,7 +226,7 @@ void loop()
     lcd.setCursor(0, 0);
     lcd.print("             ");
     lcd.setCursor(0, 1);
-    lcd.print("                ");
+    lcd.print("              ");
     choice= rand()%3;
     wait_time = 3000*speedup; // base time is 3 seconds (can change with testing)
     switch (choice) 
