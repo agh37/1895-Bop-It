@@ -177,8 +177,8 @@ int ypin = A2;
 int xpin = A1;
 int score= 0;
 double speedup=1;
-unsigned long startedWaiting;
-unsigned long wait_time;
+unsigned long double startedWaiting;
+unsigned long double wait_time;
 
 // TODO:
 // speedup
@@ -400,7 +400,9 @@ bool joy_rot()
       {
         count++;
       }
-      if (analogRead(potpin)>=800 && not attop ) // threshold can be altered during testing
+      // if one of those conditions isn't met, we are going to overwrite the value we dont like until they are
+    }
+     if (analogRead(potpin)>=800 && not attop ) // threshold can be altered during testing
       {
         return false;
       }
@@ -412,8 +414,6 @@ bool joy_rot()
       {
         return false;
       }
-      // if one of those conditions isn't met, we are going to overwrite the value we dont like until they are
-    }
    }
    if(count>=4) // one the array is full
    {
