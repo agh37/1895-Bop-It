@@ -161,10 +161,10 @@ void setup()
 #define NOTE_DS8 4978
 
 // sound groupings for beeps
-int beep[] = {NOTE_A3, NOTE_B3, NOTE_C3};
+int beep[] = {NOTE_A3, NOTE_B3, NOTE_C3, NOTE_D3};
 
 // beep durations: 4 = quarter note, 8 = eighth note, etc.:
-int beepDurations[] = {4, 4, 4};
+int beepDurations[] = {4, 4, 4, 4};
 
 // beep setup end
 
@@ -180,8 +180,6 @@ double speedup=1;
 unsigned long double startedWaiting;
 unsigned long double wait_time;
 
-// TODO:
-// speedup
 
 void loop()
 {
@@ -214,7 +212,6 @@ void loop()
     lcd.print("   ");
     choice= rand()%3;
     wait_time = 3000*speedup; // base time is 3 seconds (can change with testing)
-    beeps();
     switch (choice) 
     {
       case 0:
@@ -298,6 +295,7 @@ void loop()
    
 bool push_button() 
 {
+  beeps();
   bool attop;
   if(analogRead(potpin)>=800)
   {attop=1;}
@@ -330,6 +328,7 @@ bool push_button()
    
 bool pot() 
 {
+ beeps();
  lcd.setCursor(0, 0);
  lcd.print("SLIDE ");
  bool attop;
@@ -373,6 +372,8 @@ bool joy_rot()
   lcd.print("ROTATE");
   char seq[4]; // this is where we store our direction sequence
   bool cw=rand()%2;
+  choice=choice+cw;
+  beeps();
   lcd.setCursor(0, 1);
   if(cw)
   {lcd.print("CW ");} 
