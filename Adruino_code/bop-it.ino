@@ -177,8 +177,8 @@ int ypin = A2;
 int xpin = A1;
 int score= 0;
 double speedup=1;
-unsigned long double startedWaiting;
-unsigned long double wait_time;
+long double startedWaiting;
+long double wait_time;
 
 
 void loop()
@@ -255,7 +255,7 @@ void loop()
        // lower speedup to increase speed
        if (score%5==0 && score!=0)
        {
-         speedup=speedup-.1;
+         speedup=speedup-.04;
        }
      }
    }  
