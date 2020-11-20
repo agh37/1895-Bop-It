@@ -176,6 +176,7 @@ int potpin = A3; // Potentiometer analog pin
 int ypin = A2;
 int xpin = A1;
 int score= 0;
+int high_score= 0;
 double speedup=1;
 long double startedWaiting;
 long double wait_time;
@@ -186,6 +187,7 @@ void loop()
   lcd.setRGB(255, 255, 255);
   lcd.setCursor(0, 0);
   lcd.print("Press to start");
+  disp_hiscore();
   if(digitalRead(7)==HIGH)
    {
      start=1; // start flag
@@ -274,6 +276,7 @@ void loop()
         lcd.setCursor(0, 0);
         lcd.print("YOU LOSE! ");
         start=0;
+        update_hiscore();
         delay(3000);
        }
        else // display wrong and flash screen
@@ -510,6 +513,20 @@ void update_score()
   {lcd.print("0");}
   lcd.print(score);
 }
+void update_hiscore()
+{
+  if(score>high_score)
+  {
+   high_score=score;
+  }
+}
+void disp_hiscore()
+{
+  lcd.setCursor(14, 1);
+  if(high_score<10)
+  {lcd.print("0");}
+  lcd.print(high_score);
+}
 
 void debug()
 {
@@ -553,4 +570,4 @@ void debug()
     debug(); 
   } 
  }
-} 
+}
