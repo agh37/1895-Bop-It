@@ -193,6 +193,7 @@ void loop()
      start=1; // start flag
      score=0;
      lives=3;
+     speedup=1;
      lcd.setCursor(0, 0);
      lcd.print("              ");
      update_lives();
@@ -255,7 +256,10 @@ void loop()
          delay(100);
        }
        // lower speedup to increase speed
-         // NOTE: may not change ever point (ie may change at 5 or 10 point increments)
+       if (score%5==0 && score!=0)
+       {
+         speedup=speedup-.1;
+       }
      }
    }  
   
